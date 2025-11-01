@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  sql-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    network_mode: "host"  # Usar host para acessar MSSQL existente
+    restart: unless-stopped
+    volumes:
+      - ./:/app
+

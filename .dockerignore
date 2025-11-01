@@ -1,0 +1,17 @@
+data/
+.backup/
+.git/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.pytest_cache/
+.coverage
+.DS_Store
+*.log
+# .chainlit/  # Removido para incluir config no build
+
+

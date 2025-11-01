@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  app-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      - CHAINLIT_DATABASE_URL=postgresql://chainlit:chainlit@db-persist:5432/chainlit
+    # volumes:  # Comentados para usar código built no image
+      # - ./app:/app/app
+      # - ./public:/app/public:ro
+      # ./.chainlit removido - inclui no build para permitir traduções
+    ports:
+      - "8502:8000"
+    depends_on:
+      - db-persist
+      - mssql
+    restart: unless-stopped
+
+  db-persist:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=chainlit
+      - POSTGRES_USER=chainlit
+      - POSTGRES_PASSWORD=chainlit
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chainlit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-Str0ng!Passw0rd}
+      - MSSQL_PID=Express
+    volumes:
+      - mssql_data:/var/opt/mssql
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${MSSQL_SA_PASSWORD:-Str0ng!Passw0rd}", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  mssql_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/mssql
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/postgres
+

@@ -1,0 +1,84 @@
+/* ness. Branding - Dynamic Logo Swap for Dark/Light Theme */
+
+/* Logo container targeting */
+[data-testid="sidebar-logo"],
+.chat-sidebar-logo,
+.chainlit-logo {
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Default: show dark logo (dark theme active) */
+[data-testid="sidebar-logo"] img,
+.chat-sidebar-logo img,
+.chainlit-logo img {
+    content: url('/public/logo-dark.png');
+}
+
+/* Light theme: show light logo */
+.light [data-testid="sidebar-logo"] img,
+.light .chat-sidebar-logo img,
+.light .chainlit-logo img,
+[data-theme="light"] [data-testid="sidebar-logo"] img,
+[data-theme="light"] .chat-sidebar-logo img,
+[data-theme="light"] .chainlit-logo img {
+    content: url('/public/logo-light.png');
+}
+
+/* Ensure proper sizing */
+[data-testid="sidebar-logo"] img,
+.chat-sidebar-logo img,
+.chainlit-logo img {
+    max-height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Login page branding */
+.cl-login-page-logo img,
+.cl-auth-logo img,
+img[alt*="logo"][src*="logo-dark.png"],
+img[alt*="logo"][src*="logo-light.png"] {
+    content: url('/public/logo-dark.png');
+    max-height: 80px;
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+/* Light theme login logo */
+.light .cl-login-page-logo img,
+.light .cl-auth-logo img,
+[data-theme="light"] .cl-login-page-logo img,
+[data-theme="light"] .cl-auth-logo img {
+    content: url('/public/logo-light.png');
+}
+
+/* Hide Chainlit default logo */
+img[src*="chainlit"],
+img[alt="Chainlit"],
+img[src*="chainlit_banner"],
+img[src*="chainlit.png"],
+.chainlit-default-logo,
+.cl-default-logo {
+    display: none !important;
+}
+
+/* Force our logo on all pages */
+.auth-page img,
+.login-page img,
+.auth-container img,
+.login-container img {
+    content: url('/public/logo-dark.png') !important;
+    max-height: 80px !important;
+    width: auto !important;
+    margin: 0 auto !important;
+}
+
+.light .auth-page img,
+.light .login-page img,
+.light .auth-container img,
+.light .login-container img {
+    content: url('/public/logo-light.png') !important;
+}
+
+/* ness. Branding CSS - theme colors are defined in /public/theme.json */
