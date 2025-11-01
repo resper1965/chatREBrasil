@@ -282,4 +282,3 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 **Data**: 2025-10-30  
 **Desenvolvido por**: ness.  
 **Tecnologias**: ❤️ + 🤖 + OpenAI GPT-4
-
