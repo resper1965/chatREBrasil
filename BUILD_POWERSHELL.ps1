@@ -4,10 +4,29 @@
 Write-Host "=== 🏗️  ness. BUILD & DEPLOY ===" -ForegroundColor Cyan
 Write-Host ""
 
-# Mudar para diretório do projeto
-Set-Location "C:\Users\$env:USERNAME\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu*\LocalState\rootfs\home\resper\chatREBrasil"
-# Ou use o caminho correto do WSL
-# Set-Location "\\wsl.localhost\Ubuntu\home\resper\chatREBrasil"
+# Mudar para diretório do projeto usando WSL path
+$wslPath = "\\wsl.localhost\Ubuntu\home\resper\chatREBrasil"
+if (Test-Path $wslPath) {
+    Set-Location $wslPath
+} else {
+    # Tentar caminho alternativo
+    $altPath = "C:\Users\$env:USERNAME\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu*\LocalState\rootfs\home\resper\chatREBrasil"
+    $foundPath = Get-ChildItem -Path (Split-Path $altPath) -Filter "CanonicalGroupLimited.Ubuntu*" -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($foundPath) {
+        $fullPath = Join-Path $foundPath.FullName "LocalState\rootfs\home\resper\chatREBrasil"
+        if (Test-Path $fullPath) {
+            Set-Location $fullPath
+        } else {
+            Write-Host "❌ Erro: Diretório do projeto não encontrado" -ForegroundColor Red
+            Write-Host "   Por favor, navegue manualmente até o diretório do projeto" -ForegroundColor Yellow
+            exit 1
+        }
+    } else {
+        Write-Host "❌ Erro: Diretório do projeto não encontrado" -ForegroundColor Red
+        Write-Host "   Por favor, navegue manualmente até o diretório do projeto" -ForegroundColor Yellow
+        exit 1
+    }
+}
 
 if (-not (Test-Path "docker-compose.yml")) {
     Write-Host "❌ Erro: docker-compose.yml não encontrado" -ForegroundColor Red
@@ -40,6 +59,7 @@ Write-Host "📋 Ver logs: docker compose logs -f app-agent"
 Write-Host "🛑 Parar: docker compose down"
 Write-Host ""
 Write-Host "Desenvolvido por ness. 🚀" -ForegroundColor Cyan
+
 
 
 
