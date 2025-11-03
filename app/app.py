@@ -1046,10 +1046,10 @@ async def main(message: cl.Message):
     
     try:
         content_lower = message.content.lower()
-        
+
         # AUTO-CONECTAR MCP SE NECESSÁRIO
-        data_keywords_for_auto_connect = ["query", "sql", "tabela", "conecta", "banco", 
-                                          "database", "lista", "mostra", "extrai", 
+        data_keywords_for_auto_connect = ["query", "sql", "tabela", "conecta", "banco",
+                                          "database", "lista", "mostra", "extrai",
                                           "schema", "consulta", "quantos"]
         if any(kw in content_lower for kw in data_keywords_for_auto_connect):
             # Tentar auto-conectar se não estiver conectado
@@ -1058,39 +1058,26 @@ async def main(message: cl.Message):
                 auto_connected = await auto_connect_mssql_mcp()
                 if auto_connected:
                     await cl.Message(content="✅ Conectei automaticamente ao banco de dados!").send()
-        
+
         # ROTEAMENTO BASEADO NO PERFIL SELECIONADO
         # Se perfil específico, usa apenas aquele agente
-        # Se perfil Completo, usa roteamento inteligente
+        # Se perfil Completo, usa SEMPRE o Coordinator (orquestrador automático)
         if selected_profile == "👔 Financeiro":
             # Perfil Financeiro: sempre usa especialista financeiro
             agent = agents["financial_expert"]
             emoji = "👔" if Config.INCLUDE_EMOJIS else ""
-            
+
         elif selected_profile == "📊 Dados":
             # Perfil Dados: sempre usa analista de dados
             agent = agents["data_analyst"]
             emoji = "📊" if Config.INCLUDE_EMOJIS else ""
-            
+
         else:
-            # Perfil Completo: roteamento inteligente baseado em palavras-chave
-            financial_keywords = ["roi", "risco", "diversific", "cap rate", "cash on cash", 
-                                "valuation", "estratégia", "performance", "retorno"]
-            data_keywords = ["conecta", "query", "tabela", "quanto", "lista", "dados",
-                            "base", "sql", "mostra", "extrai", "schema", "consulta",
-                            "banco", "mcp", "database", "busca"]
-            
-            if any(kw in content_lower for kw in data_keywords):
-                agent = agents["data_analyst"]
-                emoji = "📊" if Config.INCLUDE_EMOJIS else ""
-            elif any(kw in content_lower for kw in financial_keywords):
-                agent = agents["financial_expert"]
-                emoji = "👔" if Config.INCLUDE_EMOJIS else ""
-            else:
-                # Default para perfil Completo: usa coordenador
-                agent = agents["coordinator"]
-                emoji = "🎯" if Config.INCLUDE_EMOJIS else ""
-        
+            # Perfil Completo: SEMPRE usa Coordinator para orquestração automática
+            # O Coordinator decidirá qual agente usar via OpenAI Function Calling
+            agent = agents["coordinator"]
+            emoji = "🎯" if Config.INCLUDE_EMOJIS else ""
+
         # Processa com o agente selecionado
         # Se for Coordinator, passa referência aos outros agentes para delegação
         if agent.type == AgentType.COORDINATOR:
