@@ -5,7 +5,8 @@ services:
       dockerfile: Dockerfile
     env_file: .env
     environment:
-      - CHAINLIT_DATABASE_URL=postgresql://chainlit:chainlit@db-persist:5432/chainlit
+      # IMPORTANTE: Chainlit oficial usa DATABASE_URL (sem prefixo CHAINLIT_)
+      - DATABASE_URL=postgresql://chainlit:chainlit@db-persist:5432/chainlit
     # volumes:  # Comentados para usar código built no image
       # - ./app:/app/app
       # - ./public:/app/public:ro

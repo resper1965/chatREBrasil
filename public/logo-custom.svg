@@ -1,0 +1,33 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ícone: Hexágono com "G" estilizado -->
+  <g id="icon">
+    <!-- Hexágono de fundo -->
+    <path d="M30 7.5 L45 15 L45 30 L30 37.5 L15 30 L15 15 Z"
+          stroke="currentColor"
+          stroke-width="1.5"
+          fill="none"
+          stroke-linejoin="round"/>
+
+    <!-- Letra "G" estilizada minimalista -->
+    <path d="M26 18 L34 18 L34 21 L29 21 L29 27 L33 27 M34 21 L34 27 L34 30 L26 30 L26 18"
+          stroke="currentColor"
+          stroke-width="1.5"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+  </g>
+
+  <!-- Texto: Gabi. -->
+  <g id="text">
+    <text x="55" y="32"
+          font-family="Montserrat, sans-serif"
+          font-size="28"
+          font-weight="500"
+          fill="currentColor">Gabi</text>
+    <text x="116" y="32"
+          font-family="Montserrat, sans-serif"
+          font-size="28"
+          font-weight="500"
+          fill="#00ade8">.</text>
+  </g>
+</svg>

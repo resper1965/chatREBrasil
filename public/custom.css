@@ -9,6 +9,67 @@
 /* Load custom JavaScript */
 /* Note: script tag should be added to HTML, this is just a reminder */
 
+/* ==========================================
+   LOGO CUSTOMIZADO - Gabi. by ness.
+   ========================================== */
+
+/* Injetar logo customizado na tela de login */
+body::before {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 60px;
+    background-image: url('/public/logo-custom-dark.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    pointer-events: none;
+}
+
+/* Logo no header da aplicação */
+.MuiAppBar-root::before,
+.MuiToolbar-root::before {
+    content: '';
+    display: inline-block;
+    width: 140px;
+    height: 42px;
+    background-image: url('/public/logo-custom-dark.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left center;
+    margin-right: 16px;
+}
+
+/* Logo na sidebar */
+.MuiDrawer-root .MuiDrawer-paper::before {
+    content: '';
+    display: block;
+    width: 180px;
+    height: 54px;
+    background-image: url('/public/logo-custom-dark.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 20px auto;
+}
+
+/* Light theme - usar logo light */
+.light body::before,
+.light .MuiAppBar-root::before,
+.light .MuiToolbar-root::before,
+.light .MuiDrawer-root .MuiDrawer-paper::before,
+[data-theme="light"] body::before,
+[data-theme="light"] .MuiAppBar-root::before,
+[data-theme="light"] .MuiToolbar-root::before,
+[data-theme="light"] .MuiDrawer-root .MuiDrawer-paper::before {
+    background-image: url('/public/logo-custom-light.svg');
+}
+
 /* Apply Montserrat as default font */
 body, .MuiTypography-root, input, textarea, button {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
