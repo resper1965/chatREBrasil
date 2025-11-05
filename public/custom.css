@@ -28,41 +28,104 @@ body, .MuiTypography-root, input, textarea, button {
     color: white !important;
 }
 
-/* Remove Chainlit logo from EVERYWHERE */
+/* Remove Chainlit logo from EVERYWHERE - AGGRESSIVE MODE */
+/* Header logos */
 .MuiToolbar-root img[alt*="chainlit"],
 .MuiToolbar-root img[alt*="Chainlit"],
+.MuiAppBar-root img,
+header img,
 #chainlit-logo,
 .chainlit-logo,
+
+/* Generic logos */
 img[alt="logo"],
 img[alt="Logo"],
 img[src*="logo"],
 img[src*="chainlit"],
-/* Login page logo */
+img[src*="Chainlit"],
+
+/* Login and Auth pages - CRITICAL */
 .login-page img,
 .auth-page img,
+.cl-login img,
+.cl-auth img,
 form img,
 .MuiBox-root img[alt*="logo"],
 .MuiBox-root img[alt*="Logo"],
-/* Any logo in forms or auth */
+.MuiBox-root img[alt*="chainlit"],
+.MuiBox-root img[alt*="Chainlit"],
+
+/* Form containers */
 div[class*="auth"] img,
-div[class*="login"] img {
+div[class*="login"] img,
+div[class*="Auth"] img,
+div[class*="Login"] img,
+
+/* Password auth form specific */
+form[action*="login"] img,
+form[action*="auth"] img,
+.password-auth-form img,
+.auth-form img,
+
+/* Modal and Dialog logos */
+.MuiDialog-root img,
+.MuiModal-root img,
+
+/* Sidebar logos that are NOT our custom ones */
+.MuiDrawer-root img[src*="chainlit"],
+aside img[src*="chainlit"],
+
+/* Any remaining Chainlit branding */
+[class*="chainlit"] img,
+[class*="Chainlit"] img,
+[id*="chainlit"] img,
+[id*="Chainlit"] img {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     height: 0 !important;
     width: 0 !important;
+    max-height: 0 !important;
+    max-width: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
 
-/* Hide "Made with Chainlit" footer */
+/* Hide "Made with Chainlit" footer and ALL Chainlit attribution */
 footer a[href*="chainlit"],
 footer .MuiLink-root[href*="chainlit"],
-.powered-by-chainlit {
+footer span:contains("Chainlit"),
+footer div:contains("Chainlit"),
+footer p:contains("Chainlit"),
+.powered-by-chainlit,
+.made-with-chainlit,
+[class*="poweredBy"],
+[class*="madeWith"],
+/* Hide any text containing "chainlit" */
+*:contains("Built with Chainlit"),
+*:contains("Made with Chainlit"),
+*:contains("Powered by Chainlit") {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
-/* Hide Chainlit attribution in sidebar */
+/* Hide Chainlit attribution in sidebar and everywhere else */
 .MuiDrawer-root a[href*="chainlit"],
-.MuiDrawer-root .MuiLink-root[href*="chainlit"] {
+.MuiDrawer-root .MuiLink-root[href*="chainlit"],
+aside a[href*="chainlit"],
+nav a[href*="chainlit"],
+.sidebar a[href*="chainlit"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Remove Chainlit text from all elements */
+[data-testid*="chainlit"],
+[aria-label*="chainlit"],
+[aria-label*="Chainlit"],
+[title*="chainlit"],
+[title*="Chainlit"] {
     display: none !important;
 }
 
