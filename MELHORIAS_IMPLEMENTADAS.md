@@ -166,6 +166,26 @@ O PostgreSQL armazena:
 - Feedback
 - Elementos anexados
 
+### 🎛️ Funcionalidades da Barra Lateral
+
+A barra lateral do Chainlit está **totalmente funcional** com:
+
+✅ **Listar conversas anteriores** - Todas as conversas aparecem em ordem cronológica
+✅ **Retomar conversa** - Clique para restaurar estado completo (mensagens, contexto, elementos)
+✅ **Renomear conversa** - Menu [⋮] → Rename
+✅ **Deletar conversa** - Menu [⋮] → Delete (exclusão permanente)
+✅ **Buscar conversas** - Campo de busca integrado
+✅ **Nova conversa** - Botão "New Chat"
+
+### 🕒 Quando o Chat é Persistido?
+
+**Automaticamente em tempo real:**
+1. **Ao iniciar novo chat** - Thread criado no PostgreSQL
+2. **A cada mensagem** - Salva imediatamente (usuário + resposta)
+3. **Ao finalizar** - Thread marcada como completa
+
+**Documentação completa:** `PERSISTENCIA_E_BARRA_LATERAL.md`
+
 ---
 
 ## 🐳 5. Stack Docker Completa
@@ -288,6 +308,7 @@ O orquestrador decidirá automaticamente qual agente usar:
 
 ## 📚 Documentos Relacionados
 
+- `PERSISTENCIA_E_BARRA_LATERAL.md` - **NOVO!** Guia completo sobre persistência e barra lateral
 - `MCP_SETUP.md` - Setup original do MCP
 - `README.md` - Documentação principal do projeto
 - `.env.example` - Template de variáveis de ambiente
