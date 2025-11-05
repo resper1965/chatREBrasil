@@ -691,24 +691,43 @@ def create_agents():
     # Prompts podem ser customizados via arquivo externo
     coordinator = Agent(
         AgentType.COORDINATOR,
-        "Coordenador",
-        """Você é um Coordenador de Sistema Multi-Agente especializado em análise de carteiras imobiliárias.
+        "Orquestrador Inteligente",
+        """Você é um Orquestrador Inteligente de Sistema Multi-Agente especializado em análise de carteiras imobiliárias e acesso a bases de dados.
 
-Sua função é:
-1. Receber perguntas do usuário
-2. Decidir qual agente especializado deve responder
-3. Coordenar múltiplos agentes quando necessário
-4. Consolidar respostas de forma clara
+FUNÇÃO PRINCIPAL:
+Como orquestrador central, você deve:
+1. Analisar a intenção do usuário automaticamente
+2. Decidir dinamicamente qual agente especializado é mais apropriado
+3. Coordenar múltiplos agentes quando a pergunta exigir diferentes expertises
+4. Consolidar e apresentar respostas de forma clara e profissional
+5. Gerenciar conexões MCP com bancos de dados (PostgreSQL e MS SQL Server)
 
-AGENTES DISPONÍVEIS:
-- **Analista de Dados**: Consulta bases SQL, extrai dados, listar tabelas, fazer queries
-- **Especialista Financeiro**: Análise ROI, risco, estratégias, cálculos financeiros
+AGENTES ESPECIALIZADOS DISPONÍVEIS:
+- **Analista de Dados** (delegate_to_data_analyst):
+  • Consultas SQL em PostgreSQL e MS SQL Server
+  • Listagem de tabelas e schemas
+  • Extração e análise de dados estruturados
+  • Exploração de relacionamentos entre tabelas
+  • Consultas ao histórico de chats persistidos
 
-USE AS FERRAMENTAS DE DELEGAÇÃO para direcionar a pergunta ao agente correto.
-Use delegate_to_data_analyst para perguntas sobre dados, tabelas, SQL.
-Use delegate_to_financial_expert para cálculos, ROI, risco, estratégias.
+- **Especialista Financeiro** (delegate_to_financial_expert):
+  • Cálculos de ROI, Cap Rate, Cash-on-Cash
+  • Análise de risco de carteiras imobiliárias
+  • Estratégias de diversificação de investimentos
+  • Valuation e recomendações de investimento
+  • Análise de performance financeira
 
-Responda sempre em português de forma profissional.""",
+DECISÃO DINÂMICA DE DELEGAÇÃO:
+Você deve analisar automaticamente cada pergunta e decidir:
+- Se menciona SQL, banco, tabelas, consulta, dados → delegate_to_data_analyst
+- Se menciona ROI, risco, investimento, cálculos → delegate_to_financial_expert
+- Se combina ambos → delegue sequencialmente para ambos os agentes
+
+SISTEMAS DE BANCO DE DADOS:
+- PostgreSQL (db-persist:5432) - Armazena histórico de chats e sessões
+- MS SQL Server (mssql:1433) - Base REB_BI_IA com dados de negócio
+
+IMPORTANTE: Sempre responda em português de forma profissional e objetiva.""",
         create_delegation_tools()  # Tools de delegação
     )
     
@@ -777,24 +796,29 @@ def auth_callback(username: str, password: str) -> Optional[cl.User]:
 
 @cl.set_starters
 async def set_starters():
-    """Starters customizados para análise imobiliária"""
+    """Starters customizados com conexões MCP automáticas"""
     emoji = "✅" if Config.INCLUDE_EMOJIS else ""
-    
+
     return [
+        cl.Starter(
+            label="🔌 Conectar PostgreSQL (Chat DB)",
+            message="Conectar ao banco PostgreSQL de persistência (db-persist:5432, database: chainlit, user: chainlit) e listar as tabelas disponíveis",
+            icon="🔌",
+        ),
+        cl.Starter(
+            label="📊 Conectar MS SQL Server",
+            message="Conectar ao SQL Server (mssql:1433, database: REB_BI_IA, user: sa, senha: Str0ng!Passw0rd) e explorar o schema",
+            icon="📊",
+        ),
+        cl.Starter(
+            label="💾 Ver Histórico de Chats",
+            message="Consultar o banco PostgreSQL e mostrar os últimos 10 chats salvos, incluindo quando foram criados e quantas mensagens cada um tem",
+            icon="💾",
+        ),
         cl.Starter(
             label="💰 Análise de ROI",
             message="Analise o ROI de um imóvel comprado por R$ 200.000, agora avaliado em R$ 250.000, comprado há 18 meses atrás",
             icon="💰",
-        ),
-        cl.Starter(
-            label="📊 Conectar ao SQL Server",
-            message="Conectar SQL Server mssql, base REB_BI_IA, user sa, senha Str0ng!Passw0rd, porta 1433",
-            icon="📊",
-        ),
-        cl.Starter(
-            label="🎯 Avaliação de Risco",
-            message="Analise o risco de uma carteira imobiliária com 60% residencial, 30% comercial e 10% industrial. Considere localização geográfica e perfil de inquilinos.",
-            icon="🎯",
         ),
         cl.Starter(
             label="📈 Cap Rate e Valuation",
@@ -802,40 +826,16 @@ async def set_starters():
             icon="📈",
         ),
         cl.Starter(
-            label="🔍 Diversificação de Carteira",
-            message="Sugira estratégias de diversificação para uma carteira com 80% em imóveis residenciais na zona sul do RJ, considerando risco e retorno.",
-            icon="🔍",
-        ),
-        cl.Starter(
-            label="📋 Relatório Completo",
-            message="Gere um relatório completo de análise de um conjunto de imóveis, incluindo ROI, Cap Rate, Cash-on-Cash e recomendação de investimento.",
-            icon="📋",
+            label="🎯 Avaliação de Risco",
+            message="Analise o risco de uma carteira imobiliária com 60% residencial, 30% comercial e 10% industrial. Considere localização geográfica e perfil de inquilinos.",
+            icon="🎯",
         ),
     ]
 
 
 # ==================== CHAT PROFILES ====================
-
-@cl.set_chat_profiles
-async def chat_profile():
-    """Perfis de chat para diferentes especialidades"""
-    return [
-        cl.ChatProfile(
-            name="👔 Financeiro",
-            markdown_description="**Especialista Financeiro** focado em análise de ROI, Cap Rate, Cash-on-Cash, avaliação de risco e estratégias de diversificação de carteira imobiliária.",
-            icon="/public/profile-financial.svg",
-        ),
-        cl.ChatProfile(
-            name="📊 Dados",
-            markdown_description="**Analista de Dados** especializado em consultas SQL, relatórios personalizados, métricas avançadas e extração de insights de bancos de dados imobiliários.",
-            icon="/public/profile-data.svg",
-        ),
-        cl.ChatProfile(
-            name="🎯 Completo",
-            markdown_description="**Sistema Completo** com acesso a ambos os especialistas (Financeiro e Dados). Máxima flexibilidade para análise integrada de carteira imobiliária.",
-            icon="/public/profile-complete.svg",
-        ),
-    ]
+# DESABILITADO: Sistema agora usa orquestrador dinâmico automático
+# Os agentes são selecionados automaticamente pelo coordenador baseado no contexto
 
 
 # ==================== MCP HANDLERS ====================
@@ -1031,26 +1031,23 @@ Olá, **{user_name}**!{profile_msg}
 
 @cl.on_message
 async def main(message: cl.Message):
-    """Processa mensagens"""
+    """Processa mensagens com orquestrador dinâmico automático"""
     agents = cl.user_session.get("agents")
     session_id = cl.user_session.get("id")
     count = cl.user_session.get("conversation_count", 0) + 1
     cl.user_session.set("conversation_count", count)
-    
-    # Obter perfil selecionado para roteamento inteligente
-    selected_profile = cl.user_session.get("chat_profile", "🎯 Completo")
-    
+
     log_message("USER_MESSAGE", message.content, session_id)
-    
+
     msg = await cl.Message(content="🤔 Analisando...").send()
-    
+
     try:
         content_lower = message.content.lower()
 
         # AUTO-CONECTAR MCP SE NECESSÁRIO
         data_keywords_for_auto_connect = ["query", "sql", "tabela", "conecta", "banco",
                                           "database", "lista", "mostra", "extrai",
-                                          "schema", "consulta", "quantos"]
+                                          "schema", "consulta", "quantos", "postgres", "mssql"]
         if any(kw in content_lower for kw in data_keywords_for_auto_connect):
             # Tentar auto-conectar se não estiver conectado
             mcp_tools = cl.user_session.get("mcp_tools", {})
@@ -1059,39 +1056,23 @@ async def main(message: cl.Message):
                 if auto_connected:
                     await cl.Message(content="✅ Conectei automaticamente ao banco de dados!").send()
 
-        # ROTEAMENTO BASEADO NO PERFIL SELECIONADO
-        # Se perfil específico, usa apenas aquele agente
-        # Se perfil Completo, usa SEMPRE o Coordinator (orquestrador automático)
-        if selected_profile == "👔 Financeiro":
-            # Perfil Financeiro: sempre usa especialista financeiro
-            agent = agents["financial_expert"]
-            emoji = "👔" if Config.INCLUDE_EMOJIS else ""
+        # ORQUESTRADOR DINÂMICO
+        # Sempre usa o Coordinator que decide automaticamente qual agente usar
+        # baseado no contexto da mensagem via OpenAI Function Calling
+        agent = agents["coordinator"]
+        emoji = "🎯" if Config.INCLUDE_EMOJIS else ""
 
-        elif selected_profile == "📊 Dados":
-            # Perfil Dados: sempre usa analista de dados
-            agent = agents["data_analyst"]
-            emoji = "📊" if Config.INCLUDE_EMOJIS else ""
+        # Processa com o coordenador (orquestrador)
+        # O Coordinator automaticamente delega para o agente apropriado
+        response = await agent.process(message.content, agents_ref=agents)
 
-        else:
-            # Perfil Completo: SEMPRE usa Coordinator para orquestração automática
-            # O Coordinator decidirá qual agente usar via OpenAI Function Calling
-            agent = agents["coordinator"]
-            emoji = "🎯" if Config.INCLUDE_EMOJIS else ""
-
-        # Processa com o agente selecionado
-        # Se for Coordinator, passa referência aos outros agentes para delegação
-        if agent.type == AgentType.COORDINATOR:
-            response = await agent.process(message.content, agents_ref=agents)
-        else:
-            response = await agent.process(message.content)
-        
         # Formata resposta
         formatted_response = f"{emoji} **{agent.name}**\n\n{response}"
         msg.content = formatted_response
         await msg.update()
-        
-        log_message("AGENT_RESPONSE", f"Profile: {selected_profile}, Agent: {agent.name}, Length: {len(response)}", session_id)
-        
+
+        log_message("AGENT_RESPONSE", f"Coordinator (orchestrator), Length: {len(response)}", session_id)
+
     except Exception as e:
         error_msg = f"❌ Erro: {str(e)}"
         msg.content = error_msg
