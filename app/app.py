@@ -23,6 +23,72 @@ from mcp import ClientSession
 load_dotenv()
 
 
+# ==================== MENSAGENS EDITÁVEIS ====================
+
+class Messages:
+    """Carrega mensagens de um arquivo JSON editável - SEM REBUILD!"""
+
+    _messages = None
+
+    @classmethod
+    def load(cls):
+        """Carrega mensagens do arquivo JSON"""
+        if cls._messages is None:
+            try:
+                messages_file = os.path.join(os.path.dirname(__file__), '..', 'messages.json')
+                with open(messages_file, 'r', encoding='utf-8') as f:
+                    cls._messages = json.load(f)
+            except Exception as e:
+                print(f"⚠️ Erro ao carregar messages.json: {e}")
+                # Fallback para mensagens padrão
+                cls._messages = {
+                    "boas_vindas": {
+                        "saudacao": "Olá, {username}! 👋",
+                        "descricao": "Pronto para ajudar.",
+                        "titulo_opcoes": "Como posso ajudar?",
+                        "opcoes": []
+                    },
+                    "mensagens_sistema": {
+                        "analisando": "🤔 Analisando...",
+                        "conectando": "🔄 Conectando...",
+                        "erro_generico": "❌ Erro."
+                    }
+                }
+        return cls._messages
+
+    @classmethod
+    def get(cls, *keys, **kwargs):
+        """Acessa uma mensagem do JSON
+
+        Exemplo:
+            Messages.get('boas_vindas', 'saudacao', username='João')
+            -> "Olá, João! 👋"
+        """
+        msgs = cls.load()
+
+        # Navegar pelos keys
+        for key in keys:
+            if isinstance(msgs, dict):
+                msgs = msgs.get(key, "")
+            else:
+                return ""
+
+        # Substituir placeholders
+        if isinstance(msgs, str) and kwargs:
+            try:
+                return msgs.format(**kwargs)
+            except:
+                return msgs
+
+        return msgs
+
+    @classmethod
+    def reload(cls):
+        """Recarrega mensagens (útil para testes)"""
+        cls._messages = None
+        return cls.load()
+
+
 # ==================== CONFIGURAÇÕES PERSONALIZÁVEIS ====================
 
 class Config:
@@ -886,8 +952,11 @@ async def on_mcp_connect(connection, session: ClientSession):
         
         session_id = cl.user_session.get("id", "unknown")
         log_message("SUCCESS", f"MCP conectado: {connection.name} ({len(tools)} tools)", session_id)
-        
-        await cl.Message(content=f"✅ **MCP conectado:** {connection.name}\n📊 {len(tools)} ferramentas disponíveis").send()
+
+        # Mensagem do arquivo JSON (editável sem rebuild!)
+        titulo = Messages.get('mcp', 'conectado', 'titulo')
+        mensagem = Messages.get('mcp', 'conectado', 'mensagem', connection_name=connection.name, tools_count=len(tools))
+        await cl.Message(content=f"{titulo}\n{mensagem}").send()
         
     except Exception as e:
         session_id = cl.user_session.get("id", "unknown")
@@ -906,8 +975,11 @@ async def on_mcp_disconnect(name: str, session: ClientSession):
         
         session_id = cl.user_session.get("id", "unknown")
         log_message("INFO", f"MCP desconectado: {name}", session_id)
-        
-        await cl.Message(content=f"🔌 **MCP desconectado:** {name}").send()
+
+        # Mensagem do arquivo JSON (editável sem rebuild!)
+        titulo = Messages.get('mcp', 'desconectado', 'titulo')
+        mensagem = Messages.get('mcp', 'desconectado', 'mensagem', connection_name=name)
+        await cl.Message(content=f"{titulo}: {mensagem}").send()
         
     except Exception as e:
         session_id = cl.user_session.get("id", "unknown")
@@ -975,9 +1047,11 @@ async def on_resume(thread):
     
     thread_name = thread.get("name", "Conversação anterior")
     log_message("INFO", f"Conversação retomada para {user_name}: {thread_name} (Perfil: {selected_profile})", app_user.identifier if app_user else "unknown")
-    
-    emoji_prefix = "📂 " if Config.INCLUDE_EMOJIS else ""
-    await cl.Message(content=f"{emoji_prefix}**Conversação retomada:** *{thread_name}*\n👤 Perfil: {selected_profile}").send()
+
+    # Mensagem do arquivo JSON (editável sem rebuild!)
+    titulo = Messages.get('chat_retomado', 'titulo')
+    mensagem = Messages.get('chat_retomado', 'mensagem')
+    await cl.Message(content=f"{titulo}\n{mensagem}").send()
 
 
 @cl.on_chat_start
@@ -1014,24 +1088,32 @@ Acesso total aos especialistas Financeiro e Dados."""
     profile_msg = profile_messages.get(selected_profile, "")
     
     # Criar Actions simplificadas para usuário final
+    btn_config = Messages.get('botoes', 'conectar_banco')
     actions = [
         cl.Action(
             name="conectar_default_mssql",
             payload={"action": "conectar_default_mssql"},
-            label="🔌 Conectar Banco de Dados",
-            description=f"Conecta ao banco principal"
+            label=btn_config.get('label', '🔌 Conectar Banco de Dados'),
+            description=btn_config.get('descricao', 'Conecta ao banco principal')
         )
     ]
 
-    welcome_msg = f"""Olá, **{user_name}**! 👋
+    # Mensagem de boas-vindas do arquivo JSON (editável sem rebuild!)
+    saudacao = Messages.get('boas_vindas', 'saudacao', username=user_name)
+    descricao = Messages.get('boas_vindas', 'descricao')
+    titulo_opcoes = Messages.get('boas_vindas', 'titulo_opcoes')
+    opcoes = Messages.get('boas_vindas', 'opcoes')
 
-Pronto para ajudar com suas análises imobiliárias.
+    # Montar mensagem
+    welcome_msg = f"""{saudacao}
 
-**Como posso ajudar?**
-• Calcular ROI e rentabilidade
-• Analisar riscos de investimento
-• Consultar dados do banco
-• Gerar relatórios"""
+{descricao}
+
+**{titulo_opcoes}**"""
+
+    # Adicionar opções
+    for opcao in opcoes:
+        welcome_msg += f"\n• {opcao}"
     
     await cl.Message(content=welcome_msg, actions=actions).send()
 
@@ -1046,7 +1128,9 @@ async def main(message: cl.Message):
 
     log_message("USER_MESSAGE", message.content, session_id)
 
-    msg = await cl.Message(content="🤔 Analisando...").send()
+    # Mensagem de "processando" do arquivo JSON
+    msg_analisando = Messages.get('mensagens_sistema', 'analisando')
+    msg = await cl.Message(content=msg_analisando).send()
 
     try:
         content_lower = message.content.lower()
@@ -1061,7 +1145,9 @@ async def main(message: cl.Message):
             if not mcp_tools:
                 auto_connected = await auto_connect_mssql_mcp()
                 if auto_connected:
-                    await cl.Message(content="✅ Conectei automaticamente ao banco de dados!").send()
+                    # Mensagem do arquivo JSON (editável sem rebuild!)
+                    msg_auto_conectado = Messages.get('mcp', 'auto_conectado', 'mensagem')
+                    await cl.Message(content=msg_auto_conectado).send()
 
         # ORQUESTRADOR DINÂMICO
         # Sempre usa o Coordinator que decide automaticamente qual agente usar
@@ -1081,7 +1167,9 @@ async def main(message: cl.Message):
         log_message("AGENT_RESPONSE", f"Coordinator (orchestrator), Length: {len(response)}", session_id)
 
     except Exception as e:
-        error_msg = f"❌ Erro: {str(e)}"
+        # Mensagem de erro do arquivo JSON
+        msg_erro = Messages.get('mensagens_sistema', 'erro_generico')
+        error_msg = f"{msg_erro}\n\nDetalhes: {str(e)}"
         msg.content = error_msg
         await msg.update()
         log_message("ERROR", str(e), session_id)
@@ -1222,7 +1310,9 @@ async def on_conectar_mcp_automatico(action):
         # Obter sessões MCP ativas
         mcp_sessions = cl.context.session.mcp_sessions
         if not mcp_sessions:
-            await cl.Message(content="❌ **Erro:** MCP não está configurado. Configure em 'My MCPs' primeiro!").send()
+            # Mensagem do arquivo JSON (editável sem rebuild!)
+            msg_erro = Messages.get('mcp', 'erros', 'nao_configurado')
+            await cl.Message(content=msg_erro).send()
             await action.remove()
             return
         
@@ -1234,7 +1324,9 @@ async def on_conectar_mcp_automatico(action):
                 break
         
         if not session:
-            await cl.Message(content="❌ **Erro:** Sessão MCP SQL não encontrada.").send()
+            # Mensagem do arquivo JSON (editável sem rebuild!)
+            msg_erro = Messages.get('mcp', 'erros', 'sessao_nao_encontrada')
+            await cl.Message(content=msg_erro).send()
             await action.remove()
             return
         
@@ -1247,8 +1339,9 @@ async def on_conectar_mcp_automatico(action):
             "port": 1433
         }
         
-        # Mostrar mensagem de processamento
-        msg = await cl.Message(content="🔄 Conectando ao banco de dados...").send()
+        # Mostrar mensagem de processamento (do arquivo JSON - editável sem rebuild!)
+        msg_conectando = Messages.get('mensagens_sistema', 'conectando')
+        msg = await cl.Message(content=msg_conectando).send()
         
         # Chamar connect_database via MCP
         result = await session.call_tool("connect_database", connection_params)
@@ -1274,7 +1367,9 @@ async def on_conectar_mcp_automatico(action):
     except Exception as e:
         session_id = cl.user_session.get("id", "unknown")
         log_message("ERROR", f"Erro ao conectar via action: {str(e)}", session_id)
-        await cl.Message(content=f"❌ **Erro ao conectar:** {str(e)}").send()
+        # Mensagem do arquivo JSON (editável sem rebuild!)
+        msg_erro = Messages.get('mcp', 'erros', 'erro_conectar', erro_detalhes=str(e))
+        await cl.Message(content=msg_erro).send()
         await action.remove()
 
 
@@ -1428,46 +1523,45 @@ async def connect_to_default_postgres():
 @cl.action_callback("conectar_default_mssql")
 async def on_conectar_default_mssql(action):
     """Conecta ao banco MSSQL configurado como default"""
-    msg = await cl.Message(content="🔄 Conectando ao banco MS SQL Server default...").send()
+    msg_conectando = Messages.get('mensagens_sistema', 'conectando')
+    msg = await cl.Message(content=msg_conectando).send()
 
     success, message = await connect_to_default_mssql()
 
     if success:
-        success_msg = f"""✅ **Conexão Default MSSQL Bem-Sucedida!**
+        # Mensagem de sucesso do arquivo JSON (editável!)
+        titulo = Messages.get('conexao_sucesso', 'titulo')
+        agora_pode = Messages.get('conexao_sucesso', 'agora_pode')
+        opcoes = Messages.get('conexao_sucesso', 'opcoes')
+
+        success_msg = f"""{titulo}
 
 {message}
 
-📋 **Banco configurado:**
-• Servidor: `{Config.MSSQL_DEFAULT_SERVER}:{Config.MSSQL_DEFAULT_PORT}`
-• Database: `{Config.MSSQL_DEFAULT_DATABASE}`
+**{agora_pode}**"""
 
-💡 **Agora você pode:**
-• Listar tabelas: "Quais tabelas existem?"
-• Consultar dados: "Mostre os dados da tabela X"
-• Analisar schema: "Qual a estrutura da tabela Y?"
+        # Adicionar opções
+        for opcao in opcoes:
+            success_msg += f"\n• {opcao}"
 
-🔧 **Para alterar o banco default:** Edite o arquivo `.env` e altere as variáveis `MSSQL_DEFAULT_*`"""
         msg.content = success_msg
     else:
-        msg.content = f"""❌ **Erro ao Conectar ao MSSQL Default**
+        # Mensagem de erro do arquivo JSON (editável!)
+        titulo_erro = Messages.get('conexao_erro', 'titulo')
+        como_resolver = Messages.get('conexao_erro', 'como_resolver')
+        passos = Messages.get('conexao_erro', 'passos')
+
+        error_msg = f"""{titulo_erro}
 
 {message}
 
-🔧 **Como configurar:**
-1. Edite o arquivo `.env`
-2. Configure as variáveis:
-   ```
-   MSSQL_DEFAULT_ENABLED=true
-   MSSQL_DEFAULT_SERVER=seu-servidor
-   MSSQL_DEFAULT_PORT=1433
-   MSSQL_DEFAULT_DATABASE=sua-database
-   MSSQL_DEFAULT_USERNAME=seu-usuario
-   MSSQL_DEFAULT_PASSWORD=sua-senha
-   ```
-3. Reinicie a aplicação
-4. Clique novamente neste botão
+**{como_resolver}**"""
 
-📚 **Ajuda completa:** Clique no botão "❓ Help MCP" abaixo"""
+        # Adicionar passos
+        for i, passo in enumerate(passos, 1):
+            error_msg += f"\n{i}. {passo}"
+
+        msg.content = error_msg
 
     await msg.update()
     await action.remove()
@@ -1476,46 +1570,46 @@ async def on_conectar_default_mssql(action):
 @cl.action_callback("conectar_default_postgres")
 async def on_conectar_default_postgres(action):
     """Conecta ao banco PostgreSQL configurado como default"""
-    msg = await cl.Message(content="🔄 Conectando ao banco PostgreSQL default...").send()
+    # Mensagem do arquivo JSON (editável sem rebuild!)
+    msg_conectando = Messages.get('postgresql', 'conectando')
+    msg = await cl.Message(content=msg_conectando).send()
 
     success, message = await connect_to_default_postgres()
 
     if success:
-        success_msg = f"""✅ **Conexão Default PostgreSQL Bem-Sucedida!**
+        # Mensagem de sucesso do arquivo JSON (editável sem rebuild!)
+        titulo = Messages.get('postgresql', 'conectado', 'titulo')
+        agora_pode = Messages.get('postgresql', 'conectado', 'agora_pode')
+        opcoes = Messages.get('postgresql', 'conectado', 'opcoes')
+
+        success_msg = f"""{titulo}
 
 {message}
 
-📋 **Banco configurado:**
-• Host: `{Config.POSTGRES_DEFAULT_HOST}:{Config.POSTGRES_DEFAULT_PORT}`
-• Database: `{Config.POSTGRES_DEFAULT_DATABASE}`
+**{agora_pode}**"""
 
-💡 **Agora você pode:**
-• Ver histórico de chats: "Mostre os últimos 10 chats"
-• Consultar tabelas: "Quais tabelas do Chainlit existem?"
-• Analisar dados: "Quantas mensagens eu enviei?"
+        # Adicionar opções
+        for opcao in opcoes:
+            success_msg += f"\n• {opcao}"
 
-🔧 **Para alterar o banco default:** Edite o arquivo `.env` e altere as variáveis `POSTGRES_DEFAULT_*`"""
         msg.content = success_msg
     else:
-        msg.content = f"""❌ **Erro ao Conectar ao PostgreSQL Default**
+        # Mensagem de erro do arquivo JSON (editável sem rebuild!)
+        titulo_erro = Messages.get('postgresql', 'erro', 'titulo')
+        como_resolver = Messages.get('postgresql', 'erro', 'como_resolver')
+        passos = Messages.get('postgresql', 'erro', 'passos')
+
+        error_msg = f"""{titulo_erro}
 
 {message}
 
-🔧 **Como configurar:**
-1. Edite o arquivo `.env`
-2. Configure as variáveis:
-   ```
-   POSTGRES_DEFAULT_ENABLED=true
-   POSTGRES_DEFAULT_HOST=seu-host
-   POSTGRES_DEFAULT_PORT=5432
-   POSTGRES_DEFAULT_DATABASE=sua-database
-   POSTGRES_DEFAULT_USERNAME=seu-usuario
-   POSTGRES_DEFAULT_PASSWORD=sua-senha
-   ```
-3. Reinicie a aplicação
-4. Clique novamente neste botão
+**{como_resolver}**"""
 
-📚 **Ajuda completa:** Clique no botão "❓ Help MCP" abaixo"""
+        # Adicionar passos
+        for i, passo in enumerate(passos, 1):
+            error_msg += f"\n{i}. {passo}"
+
+        msg.content = error_msg
 
     await msg.update()
     await action.remove()
