@@ -36,12 +36,35 @@ class Config:
     # Database
     DEFAULT_DB_PORT = int(os.getenv("DB_PORT", "1433"))
     QUERY_LIMIT = int(os.getenv("QUERY_LIMIT", "100"))
-    
-    # MSSQL Default Connection (opcional, para uso automático)
+
+    # MSSQL Configuration
     MSSQL_SERVER = os.getenv("MSSQL_SERVER", "localhost")
     MSSQL_DATABASE = os.getenv("MSSQL_DATABASE")
     MSSQL_USERNAME = os.getenv("MSSQL_USERNAME", "sa")
     MSSQL_PASSWORD = os.getenv("MSSQL_SA_PASSWORD", "Str0ng!Passw0rd")
+
+    # MSSQL Default Connection (para botão de conexão rápida)
+    MSSQL_DEFAULT_ENABLED = os.getenv("MSSQL_DEFAULT_ENABLED", "true").lower() == "true"
+    MSSQL_DEFAULT_SERVER = os.getenv("MSSQL_DEFAULT_SERVER", "mssql")
+    MSSQL_DEFAULT_PORT = int(os.getenv("MSSQL_DEFAULT_PORT", "1433"))
+    MSSQL_DEFAULT_DATABASE = os.getenv("MSSQL_DEFAULT_DATABASE", "REB_BI_IA")
+    MSSQL_DEFAULT_USERNAME = os.getenv("MSSQL_DEFAULT_USERNAME", "sa")
+    MSSQL_DEFAULT_PASSWORD = os.getenv("MSSQL_DEFAULT_PASSWORD", os.getenv("MSSQL_SA_PASSWORD", "Str0ng!Passw0rd"))
+
+    # PostgreSQL Configuration
+    POSTGRES_HOST = os.getenv("POSTGRES_HOST", "db-persist")
+    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", "5432"))
+    POSTGRES_DB = os.getenv("POSTGRES_DB", "chainlit")
+    POSTGRES_USER = os.getenv("POSTGRES_USER", "chainlit")
+    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "chainlit")
+
+    # PostgreSQL Default Connection (para botão de conexão rápida)
+    POSTGRES_DEFAULT_ENABLED = os.getenv("POSTGRES_DEFAULT_ENABLED", "true").lower() == "true"
+    POSTGRES_DEFAULT_HOST = os.getenv("POSTGRES_DEFAULT_HOST", "db-persist")
+    POSTGRES_DEFAULT_PORT = int(os.getenv("POSTGRES_DEFAULT_PORT", "5432"))
+    POSTGRES_DEFAULT_DATABASE = os.getenv("POSTGRES_DEFAULT_DATABASE", "chainlit")
+    POSTGRES_DEFAULT_USERNAME = os.getenv("POSTGRES_DEFAULT_USERNAME", "chainlit")
+    POSTGRES_DEFAULT_PASSWORD = os.getenv("POSTGRES_DEFAULT_PASSWORD", "chainlit")
     
     # Sistema
     ENABLE_LOGGING = os.getenv("ENABLE_LOGGING", "true").lower() == "true"
@@ -993,40 +1016,53 @@ Acesso total aos especialistas Financeiro e Dados."""
     # Criar Actions para facilitar conexão MCP
     actions = [
         cl.Action(
-            name="conectar_mcp_mssql",
-            payload={"action": "conectar"},
-            label="🔌 Conectar ao SQL Server",
-            description="Clique para ver instruções de conexão MCP ao SQL Server"
+            name="conectar_default_mssql",
+            payload={"action": "conectar_default_mssql"},
+            label="🔌 Conectar MSSQL Default",
+            description=f"Conecta automaticamente ao MS SQL Server configurado ({Config.MSSQL_DEFAULT_SERVER}/{Config.MSSQL_DEFAULT_DATABASE})"
         ),
         cl.Action(
-            name="conectar_mcp_automatico",
-            payload={"action": "conectar_auto"},
-            label="⚡ Conectar Agora (Automático)",
-            description="Conecta automaticamente ao banco REB_BI_IA usando as credenciais configuradas"
+            name="conectar_default_postgres",
+            payload={"action": "conectar_default_postgres"},
+            label="🐘 Conectar PostgreSQL Default",
+            description=f"Conecta automaticamente ao PostgreSQL configurado ({Config.POSTGRES_DEFAULT_HOST}/{Config.POSTGRES_DEFAULT_DATABASE})"
+        ),
+        cl.Action(
+            name="help_mcp",
+            payload={"action": "help"},
+            label="❓ Help MCP",
+            description="Tutorial completo sobre como usar MCP e configurar bancos de dados default"
         ),
         cl.Action(
             name="exemplo_consulta_mcp",
             payload={"action": "exemplo"},
-            label="📊 Ver Exemplo de Consulta",
-            description="Veja um exemplo prático de consulta ao banco via MCP"
+            label="📊 Ver Exemplos",
+            description="Veja exemplos práticos de consultas ao banco via MCP"
         )
     ]
     
-    welcome_msg = f"""{emoji_prefix}**Sistema de Análise de Carteira Imobiliária**
+    welcome_msg = f"""{emoji_prefix}**Gabi. - Assistente Inteligente de Análise Imobiliária**
 
-Olá, **{user_name}**!{profile_msg}
+Olá, **{user_name}**! 👋
 
-**Configuração Atual:**
-• Modelo: {Config.MODEL}
-• Limite de queries: {Config.QUERY_LIMIT}
-• ROI excelente: >{Config.ROI_EXCELLENT_THRESHOLD}%
+**🎯 O que posso fazer:**
+• 💰 Análise financeira (ROI, Cap Rate, risco)
+• 📊 Consultas a bancos de dados via MCP
+• 💾 Acesso ao histórico de conversas
+• 🤖 Orquestração inteligente de agentes
 
-**Exemplos:**
-• *"Analise ROI de imóvel comprado por 200k, valendo 250k, há 18 meses"*
-• *"Conecte ao banco de dados via MCP"*
-• *"Qual o risco da carteira comercial em Lisboa?"*
+**⚡ Conexão Rápida:**
+Use os botões abaixo para conectar aos bancos de dados configurados:
+• 🔌 **MSSQL Default** → {Config.MSSQL_DEFAULT_SERVER}/{Config.MSSQL_DEFAULT_DATABASE}
+• 🐘 **PostgreSQL Default** → {Config.POSTGRES_DEFAULT_HOST}/{Config.POSTGRES_DEFAULT_DATABASE}
 
-**💡 Dica:** Para acessar dados SQL Server, primeiro conecte via **My MCPs** na barra lateral, depois use os botões abaixo para ajuda."""
+**💡 Dica:** Clique em "❓ Help MCP" para ver o tutorial completo!
+
+**Exemplos de perguntas:**
+• *"Calcule o ROI de um imóvel comprado por R$ 200.000"*
+• *"Liste as tabelas do banco de dados"*
+• *"Mostre meus últimos 10 chats salvos"*
+• *"Analise o risco de uma carteira 60% residencial"*"""
     
     await cl.Message(content=welcome_msg, actions=actions).send()
 
@@ -1315,6 +1351,390 @@ Após conectar ao SQL Server via MCP, você pode fazer perguntas em português n
 💡 **Dica:** Seja específico nas perguntas para obter melhores resultados!"""
     
     await cl.Message(content=example_msg).send()
+    await action.remove()
+
+
+# ==================== CONEXÃO DEFAULT ====================
+
+async def connect_to_default_mssql():
+    """Conecta ao banco MS SQL Server configurado como default no .env"""
+    try:
+        if not Config.MSSQL_DEFAULT_ENABLED:
+            return False, "Conexão default MSSQL desabilitada no .env"
+
+        # Obter sessões MCP ativas
+        mcp_sessions = cl.context.session.mcp_sessions
+        if not mcp_sessions:
+            return False, "MCP não configurado"
+
+        # Procurar sessão MSSQL
+        session = None
+        for name, (s, _) in mcp_sessions.items():
+            if "mssql" in name.lower() or "sql" in name.lower():
+                session = s
+                break
+
+        if not session:
+            return False, "Sessão MCP MSSQL não encontrada"
+
+        # Parâmetros de conexão do default
+        connection_params = {
+            "server": Config.MSSQL_DEFAULT_SERVER,
+            "database": Config.MSSQL_DEFAULT_DATABASE,
+            "username": Config.MSSQL_DEFAULT_USERNAME,
+            "password": Config.MSSQL_DEFAULT_PASSWORD,
+            "port": Config.MSSQL_DEFAULT_PORT
+        }
+
+        # Conectar
+        result = await session.call_tool("connect_database", connection_params)
+
+        # Processar resultado
+        if isinstance(result, list) and len(result) > 0:
+            content = result[0].text if hasattr(result[0], 'text') else str(result[0])
+            result_data = json.loads(content) if isinstance(content, str) else content
+
+            if result_data.get("success"):
+                tables_count = result_data.get("tables_discovered", 0)
+                return True, f"Conectado a {Config.MSSQL_DEFAULT_SERVER}/{Config.MSSQL_DEFAULT_DATABASE} ({tables_count} tabelas)"
+
+        return False, "Erro ao processar resposta da conexão"
+
+    except Exception as e:
+        session_id = cl.user_session.get("id", "unknown")
+        log_message("ERROR", f"Erro ao conectar MSSQL default: {str(e)}", session_id)
+        return False, f"Erro: {str(e)}"
+
+
+async def connect_to_default_postgres():
+    """Conecta ao banco PostgreSQL configurado como default no .env"""
+    try:
+        if not Config.POSTGRES_DEFAULT_ENABLED:
+            return False, "Conexão default PostgreSQL desabilitada no .env"
+
+        # Obter sessões MCP ativas
+        mcp_sessions = cl.context.session.mcp_sessions
+        if not mcp_sessions:
+            return False, "MCP não configurado"
+
+        # Procurar sessão PostgreSQL
+        session = None
+        for name, (s, _) in mcp_sessions.items():
+            if "postgres" in name.lower() or "pg" in name.lower():
+                session = s
+                break
+
+        if not session:
+            return False, "Sessão MCP PostgreSQL não encontrada"
+
+        # Parâmetros de conexão do default
+        connection_params = {
+            "host": Config.POSTGRES_DEFAULT_HOST,
+            "database": Config.POSTGRES_DEFAULT_DATABASE,
+            "user": Config.POSTGRES_DEFAULT_USERNAME,
+            "password": Config.POSTGRES_DEFAULT_PASSWORD,
+            "port": Config.POSTGRES_DEFAULT_PORT
+        }
+
+        # Conectar
+        result = await session.call_tool("connect_database", connection_params)
+
+        # Processar resultado
+        if isinstance(result, list) and len(result) > 0:
+            content = result[0].text if hasattr(result[0], 'text') else str(result[0])
+            result_data = json.loads(content) if isinstance(content, str) else content
+
+            if result_data.get("success"):
+                tables_count = result_data.get("tables_discovered", 0)
+                return True, f"Conectado a {Config.POSTGRES_DEFAULT_HOST}/{Config.POSTGRES_DEFAULT_DATABASE} ({tables_count} tabelas)"
+
+        return False, "Erro ao processar resposta da conexão"
+
+    except Exception as e:
+        session_id = cl.user_session.get("id", "unknown")
+        log_message("ERROR", f"Erro ao conectar PostgreSQL default: {str(e)}", session_id)
+        return False, f"Erro: {str(e)}"
+
+
+@cl.action_callback("conectar_default_mssql")
+async def on_conectar_default_mssql(action):
+    """Conecta ao banco MSSQL configurado como default"""
+    msg = await cl.Message(content="🔄 Conectando ao banco MS SQL Server default...").send()
+
+    success, message = await connect_to_default_mssql()
+
+    if success:
+        success_msg = f"""✅ **Conexão Default MSSQL Bem-Sucedida!**
+
+{message}
+
+📋 **Banco configurado:**
+• Servidor: `{Config.MSSQL_DEFAULT_SERVER}:{Config.MSSQL_DEFAULT_PORT}`
+• Database: `{Config.MSSQL_DEFAULT_DATABASE}`
+
+💡 **Agora você pode:**
+• Listar tabelas: "Quais tabelas existem?"
+• Consultar dados: "Mostre os dados da tabela X"
+• Analisar schema: "Qual a estrutura da tabela Y?"
+
+🔧 **Para alterar o banco default:** Edite o arquivo `.env` e altere as variáveis `MSSQL_DEFAULT_*`"""
+        msg.content = success_msg
+    else:
+        msg.content = f"""❌ **Erro ao Conectar ao MSSQL Default**
+
+{message}
+
+🔧 **Como configurar:**
+1. Edite o arquivo `.env`
+2. Configure as variáveis:
+   ```
+   MSSQL_DEFAULT_ENABLED=true
+   MSSQL_DEFAULT_SERVER=seu-servidor
+   MSSQL_DEFAULT_PORT=1433
+   MSSQL_DEFAULT_DATABASE=sua-database
+   MSSQL_DEFAULT_USERNAME=seu-usuario
+   MSSQL_DEFAULT_PASSWORD=sua-senha
+   ```
+3. Reinicie a aplicação
+4. Clique novamente neste botão
+
+📚 **Ajuda completa:** Clique no botão "❓ Help MCP" abaixo"""
+
+    await msg.update()
+    await action.remove()
+
+
+@cl.action_callback("conectar_default_postgres")
+async def on_conectar_default_postgres(action):
+    """Conecta ao banco PostgreSQL configurado como default"""
+    msg = await cl.Message(content="🔄 Conectando ao banco PostgreSQL default...").send()
+
+    success, message = await connect_to_default_postgres()
+
+    if success:
+        success_msg = f"""✅ **Conexão Default PostgreSQL Bem-Sucedida!**
+
+{message}
+
+📋 **Banco configurado:**
+• Host: `{Config.POSTGRES_DEFAULT_HOST}:{Config.POSTGRES_DEFAULT_PORT}`
+• Database: `{Config.POSTGRES_DEFAULT_DATABASE}`
+
+💡 **Agora você pode:**
+• Ver histórico de chats: "Mostre os últimos 10 chats"
+• Consultar tabelas: "Quais tabelas do Chainlit existem?"
+• Analisar dados: "Quantas mensagens eu enviei?"
+
+🔧 **Para alterar o banco default:** Edite o arquivo `.env` e altere as variáveis `POSTGRES_DEFAULT_*`"""
+        msg.content = success_msg
+    else:
+        msg.content = f"""❌ **Erro ao Conectar ao PostgreSQL Default**
+
+{message}
+
+🔧 **Como configurar:**
+1. Edite o arquivo `.env`
+2. Configure as variáveis:
+   ```
+   POSTGRES_DEFAULT_ENABLED=true
+   POSTGRES_DEFAULT_HOST=seu-host
+   POSTGRES_DEFAULT_PORT=5432
+   POSTGRES_DEFAULT_DATABASE=sua-database
+   POSTGRES_DEFAULT_USERNAME=seu-usuario
+   POSTGRES_DEFAULT_PASSWORD=sua-senha
+   ```
+3. Reinicie a aplicação
+4. Clique novamente neste botão
+
+📚 **Ajuda completa:** Clique no botão "❓ Help MCP" abaixo"""
+
+    await msg.update()
+    await action.remove()
+
+
+@cl.action_callback("help_mcp")
+async def on_help_mcp(action):
+    """Mostra tutorial completo sobre MCP"""
+    help_msg = """# 📚 Help: Conexão via MCP (Model Context Protocol)
+
+## 🎯 O que é MCP?
+
+**MCP (Model Context Protocol)** é um protocolo que permite que Gabi. se conecte diretamente a bancos de dados e execute operações de forma segura e automática.
+
+---
+
+## 🔌 Bancos Disponíveis
+
+### 1️⃣ **MS SQL Server**
+**Propósito:** Dados de negócio (imóveis, análises, etc.)
+**Servidor Default:** `{mssql_server}:{mssql_port}`
+**Database Default:** `{mssql_db}`
+
+### 2️⃣ **PostgreSQL**
+**Propósito:** Histórico de conversas e persistência do Chainlit
+**Host Default:** `{pg_host}:{pg_port}`
+**Database Default:** `{pg_db}`
+
+---
+
+## 🚀 Como Conectar (3 Formas)
+
+### **Forma 1: Botão "Conectar Banco Default"** ⭐ RECOMENDADO
+1. Clique no botão "🔌 Conectar MSSQL Default" ou "🔌 Conectar PostgreSQL Default"
+2. Pronto! Conectado automaticamente
+
+**Vantagem:** Mais rápido e fácil!
+
+### **Forma 2: Starter Pré-Configurado**
+1. Clique em um dos starters:
+   - 🔌 Conectar PostgreSQL (Chat DB)
+   - 📊 Conectar MS SQL Server
+2. Gabi. conectará automaticamente
+
+### **Forma 3: Pergunta Direta**
+Digite: *"Conectar ao banco PostgreSQL de persistência"*
+Gabi. entenderá e conectará automaticamente!
+
+---
+
+## 🔧 Configurar Banco Default
+
+Os bancos default são configurados no arquivo `.env`:
+
+### **MS SQL Server Default:**
+```bash
+MSSQL_DEFAULT_ENABLED=true
+MSSQL_DEFAULT_SERVER=mssql        # Altere para seu servidor
+MSSQL_DEFAULT_PORT=1433
+MSSQL_DEFAULT_DATABASE=REB_BI_IA  # Altere para sua database
+MSSQL_DEFAULT_USERNAME=sa
+MSSQL_DEFAULT_PASSWORD=sua-senha  # Altere a senha
+```
+
+### **PostgreSQL Default:**
+```bash
+POSTGRES_DEFAULT_ENABLED=true
+POSTGRES_DEFAULT_HOST=db-persist   # Altere para seu host
+POSTGRES_DEFAULT_PORT=5432
+POSTGRES_DEFAULT_DATABASE=chainlit # Altere para sua database
+POSTGRES_DEFAULT_USERNAME=chainlit
+POSTGRES_DEFAULT_PASSWORD=sua-senha  # Altere a senha
+```
+
+**Após editar:** Reinicie a aplicação com `docker-compose restart app-agent`
+
+---
+
+## 💡 Exemplos de Uso
+
+### **Após conectar ao MSSQL:**
+```
+"Quais tabelas existem no banco?"
+"Mostre as primeiras 10 linhas da tabela Properties"
+"Quantos imóveis temos cadastrados?"
+"Liste imóveis com valor acima de R$ 500.000"
+"Qual a estrutura da tabela Transactions?"
+```
+
+### **Após conectar ao PostgreSQL:**
+```
+"Mostre meus últimos 10 chats"
+"Quantas mensagens enviei hoje?"
+"Quais tabelas o Chainlit usa?"
+"Liste todas as threads (conversas) salvas"
+```
+
+---
+
+## 🛡️ Segurança
+
+✅ **Permitido:**
+- SELECT (consultas)
+- Schema discovery
+- Preview de tabelas
+
+❌ **Bloqueado:**
+- INSERT, UPDATE, DELETE
+- DROP, TRUNCATE, ALTER
+- EXEC, xp_cmdshell
+- Qualquer comando destrutivo
+
+**Limite:** 100 resultados por query (configurável em `.env`)
+
+---
+
+## 🔍 Ferramentas MCP Disponíveis
+
+Após conectar, você tem acesso a 6 ferramentas automáticas:
+
+| Ferramenta | Descrição |
+|-----------|-----------|
+| `connect_database` | Conecta e descobre schema |
+| `get_database_schema` | Retorna metadados completos |
+| `execute_query` | Executa SELECT seguro |
+| `analyze_relationships` | Analisa FKs e sugere JOINs |
+| `preview_table` | Mostra primeiras linhas |
+| `search_data` | Busca em colunas de texto |
+
+**Você não precisa chamar essas ferramentas!** Gabi. as usa automaticamente quando você faz perguntas.
+
+---
+
+## 🆘 Troubleshooting
+
+### **Erro: "MCP não configurado"**
+**Solução:** O MCP está configurado automaticamente no Docker. Se ver este erro:
+1. Verifique se `.chainlit/config.toml` tem a seção `[mcp]`
+2. Reinicie: `docker-compose restart app-agent`
+
+### **Erro: "Sessão MCP não encontrada"**
+**Solução:**
+1. Verifique os logs: `docker-compose logs app-agent`
+2. Certifique-se que o container está rodando: `docker-compose ps`
+
+### **Erro: "Falha ao conectar ao banco"**
+**Solução:**
+1. Verifique as credenciais no `.env`
+2. Teste conexão manual:
+   ```bash
+   # MSSQL
+   docker exec -it chatrebrasil-mssql-1 /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'sua-senha' -C
+
+   # PostgreSQL
+   docker exec -it chatrebrasil-db-persist-1 psql -U chainlit -d chainlit
+   ```
+3. Veja se os containers estão rodando: `docker-compose ps`
+
+### **Como desabilitar banco default?**
+No `.env`, altere:
+```bash
+MSSQL_DEFAULT_ENABLED=false
+POSTGRES_DEFAULT_ENABLED=false
+```
+
+---
+
+## 📖 Documentação Completa
+
+Para mais detalhes, consulte:
+- `PERSISTENCIA_E_BARRA_LATERAL.md` - Sobre PostgreSQL e persistência
+- `MCP_SETUP.md` - Setup avançado de MCP
+- `MELHORIAS_IMPLEMENTADAS.md` - Todas as features
+
+---
+
+**Dúvidas?** Pergunte diretamente: *"Como faço para X?"*
+
+Gabi. está aqui para ajudar! 🤖""".format(
+        mssql_server=Config.MSSQL_DEFAULT_SERVER,
+        mssql_port=Config.MSSQL_DEFAULT_PORT,
+        mssql_db=Config.MSSQL_DEFAULT_DATABASE,
+        pg_host=Config.POSTGRES_DEFAULT_HOST,
+        pg_port=Config.POSTGRES_DEFAULT_PORT,
+        pg_db=Config.POSTGRES_DEFAULT_DATABASE
+    )
+
+    await cl.Message(content=help_msg).send()
     await action.remove()
 
 
