@@ -70,27 +70,17 @@ reaction_on_message_received = false
     allowed_executables = [ "npx", "uvx", "python" ]
 
 [UI]
-<<<<<<< HEAD
-# Name of the app and chatbot.
-name = "Gabi."
-=======
 # Name of the assistant.
-name = "ChatRE Brasil"
->>>>>>> a0ddd4b (Realinhar config.toml com Chainlit 2.8.4 - manter apenas idioma, logo e cor #00ade8)
+name = "Gabi."
 
 # default_theme = "dark"
 
-<<<<<<< HEAD
-# Description of the app and chatbot. This is used for HTML tags.
-description = "Assistente inteligente de análise imobiliária - ChatRE Brasil"
-=======
 # layout = "wide"
 
 # default_sidebar_state = "open"
 
 # Description of the assistant. This is used for HTML tags.
-# description = ""
->>>>>>> a0ddd4b (Realinhar config.toml com Chainlit 2.8.4 - manter apenas idioma, logo e cor #00ade8)
+description = "Assistente inteligente de análise imobiliária - ChatRE Brasil"
 
 # Chain of Thought (CoT) display mode. Can be "hidden", "tool_call" or "full".
 cot = "full"
@@ -98,48 +88,7 @@ cot = "full"
 # The style of alert boxes. Can be "classic" or "modern".
 alert_style = "classic"
 
-<<<<<<< HEAD
-# Hide the chain of thought details from the user in the UI.
-hide_cot = false
-
-# Link to your github repo. This will add a github button in the UI's header.
-github = "https://github.com/resper1965/chatREBrasil"
-
-# Hide Chainlit branding
-hide_cot = true
-
-# Specify a CSS file that can be used to customize the user interface.
-# The CSS file can be served from the public directory or via an external link.
-custom_css = "/public/custom.css"
-
-# Specify a Javascript file that can be used to customize the user interface.
-# The Javascript file can be served from the public directory.
-# custom_js = "/public/test.js"
-
-# Specify a custom font url.
-# custom_font = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
-
-# Specify a custom build directory for the frontend.
-# This can be used to customize the frontend code.
-# Be careful: If this is a relative path, it should not start with a slash.
-# custom_build = "./public/build"
-
-# Override default MUI light theme. (Check theme.ts)
-[UI.theme]
-    #font_family = "Inter, sans-serif"
-[UI.theme.light]
-    #background = "#FAFAFA"
-    #paper = "#FFFFFF"
-
-    [UI.theme.light.primary]
-        #main = "#F80061"
-        #dark = "#980039"
-        #light = "#FFE7EB"
-
-# Override default MUI dark theme. (Check theme.ts)
-=======
 # Override default MUI dark theme (maintaining ness. brand color #00ade8)
->>>>>>> a0ddd4b (Realinhar config.toml com Chainlit 2.8.4 - manter apenas idioma, logo e cor #00ade8)
 [UI.theme.dark]
     [UI.theme.dark.primary]
         main = "#00ade8"
