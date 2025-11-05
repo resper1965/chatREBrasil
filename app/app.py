@@ -1013,56 +1013,25 @@ Acesso total aos especialistas Financeiro e Dados."""
     
     profile_msg = profile_messages.get(selected_profile, "")
     
-    # Criar Actions para facilitar conexão MCP
+    # Criar Actions simplificadas para usuário final
     actions = [
         cl.Action(
             name="conectar_default_mssql",
             payload={"action": "conectar_default_mssql"},
-            label="🔌 Conectar MSSQL Default",
-            description=f"Conecta automaticamente ao MS SQL Server configurado ({Config.MSSQL_DEFAULT_SERVER}/{Config.MSSQL_DEFAULT_DATABASE})"
-        ),
-        cl.Action(
-            name="conectar_default_postgres",
-            payload={"action": "conectar_default_postgres"},
-            label="🐘 Conectar PostgreSQL Default",
-            description=f"Conecta automaticamente ao PostgreSQL configurado ({Config.POSTGRES_DEFAULT_HOST}/{Config.POSTGRES_DEFAULT_DATABASE})"
-        ),
-        cl.Action(
-            name="help_mcp",
-            payload={"action": "help"},
-            label="❓ Help MCP",
-            description="Tutorial completo sobre como usar MCP e configurar bancos de dados default"
-        ),
-        cl.Action(
-            name="exemplo_consulta_mcp",
-            payload={"action": "exemplo"},
-            label="📊 Ver Exemplos",
-            description="Veja exemplos práticos de consultas ao banco via MCP"
+            label="🔌 Conectar Banco de Dados",
+            description=f"Conecta ao banco principal"
         )
     ]
-    
-    welcome_msg = f"""{emoji_prefix}**Gabi. - Assistente Inteligente de Análise Imobiliária**
 
-Olá, **{user_name}**! 👋
+    welcome_msg = f"""Olá, **{user_name}**! 👋
 
-**🎯 O que posso fazer:**
-• 💰 Análise financeira (ROI, Cap Rate, risco)
-• 📊 Consultas a bancos de dados via MCP
-• 💾 Acesso ao histórico de conversas
-• 🤖 Orquestração inteligente de agentes
+Pronto para ajudar com suas análises imobiliárias.
 
-**⚡ Conexão Rápida:**
-Use os botões abaixo para conectar aos bancos de dados configurados:
-• 🔌 **MSSQL Default** → {Config.MSSQL_DEFAULT_SERVER}/{Config.MSSQL_DEFAULT_DATABASE}
-• 🐘 **PostgreSQL Default** → {Config.POSTGRES_DEFAULT_HOST}/{Config.POSTGRES_DEFAULT_DATABASE}
-
-**💡 Dica:** Clique em "❓ Help MCP" para ver o tutorial completo!
-
-**Exemplos de perguntas:**
-• *"Calcule o ROI de um imóvel comprado por R$ 200.000"*
-• *"Liste as tabelas do banco de dados"*
-• *"Mostre meus últimos 10 chats salvos"*
-• *"Analise o risco de uma carteira 60% residencial"*"""
+**Como posso ajudar?**
+• Calcular ROI e rentabilidade
+• Analisar riscos de investimento
+• Consultar dados do banco
+• Gerar relatórios"""
     
     await cl.Message(content=welcome_msg, actions=actions).send()
 

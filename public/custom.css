@@ -28,12 +28,29 @@ body, .MuiTypography-root, input, textarea, button {
     color: white !important;
 }
 
-/* Remove Chainlit logo from header */
+/* Remove Chainlit logo from EVERYWHERE */
 .MuiToolbar-root img[alt*="chainlit"],
 .MuiToolbar-root img[alt*="Chainlit"],
 #chainlit-logo,
-.chainlit-logo {
+.chainlit-logo,
+img[alt="logo"],
+img[alt="Logo"],
+img[src*="logo"],
+img[src*="chainlit"],
+/* Login page logo */
+.login-page img,
+.auth-page img,
+form img,
+.MuiBox-root img[alt*="logo"],
+.MuiBox-root img[alt*="Logo"],
+/* Any logo in forms or auth */
+div[class*="auth"] img,
+div[class*="login"] img {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
 }
 
 /* Hide "Made with Chainlit" footer */
