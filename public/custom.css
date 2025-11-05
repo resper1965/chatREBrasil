@@ -1,0 +1,202 @@
+/* ==========================================
+   Gabi. - Custom CSS
+   Branding customizado e remoção do Chainlit
+   ========================================== */
+
+/* Import Montserrat font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+/* Apply Montserrat as default font */
+body, .MuiTypography-root, input, textarea, button {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Gabi. branding - Nome com ponto ciano */
+.gabi-brand {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 500 !important;
+}
+
+.gabi-brand .dot {
+    color: #00ade8 !important;
+}
+
+/* App title styling */
+.MuiToolbar-root .MuiTypography-h6 {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 500 !important;
+    color: white !important;
+}
+
+/* Remove Chainlit logo from header */
+.MuiToolbar-root img[alt*="chainlit"],
+.MuiToolbar-root img[alt*="Chainlit"],
+#chainlit-logo,
+.chainlit-logo {
+    display: none !important;
+}
+
+/* Hide "Made with Chainlit" footer */
+footer a[href*="chainlit"],
+footer .MuiLink-root[href*="chainlit"],
+.powered-by-chainlit {
+    display: none !important;
+}
+
+/* Hide Chainlit attribution in sidebar */
+.MuiDrawer-root a[href*="chainlit"],
+.MuiDrawer-root .MuiLink-root[href*="chainlit"] {
+    display: none !important;
+}
+
+/* Customize header with gradient */
+.MuiAppBar-root {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Customize login page */
+.login-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.login-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 10px;
+}
+
+.login-subtitle {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 30px 0;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    color: #475569;
+    font-size: 1rem;
+}
+
+.feature-icon {
+    margin-right: 12px;
+    font-size: 1.5rem;
+}
+
+/* Customize buttons */
+.MuiButton-root {
+    border-radius: 8px !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    padding: 10px 24px !important;
+}
+
+.MuiButton-containedPrimary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.MuiButton-containedPrimary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Customize input fields */
+.MuiTextField-root input {
+    border-radius: 8px !important;
+}
+
+.MuiOutlinedInput-root {
+    border-radius: 8px !important;
+}
+
+/* Customize chat messages */
+.message-container {
+    border-radius: 12px !important;
+}
+
+/* Customize starters */
+.starter-button {
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+.starter-button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Custom footer with "powered by ness." */
+footer {
+    text-align: center !important;
+    padding: 20px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
+}
+
+footer::after {
+    content: "powered by ness.";
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    color: #64748b;
+}
+
+footer:empty::after {
+    display: block !important;
+}
+
+/* Style for ness. branding */
+.ness-brand {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
+}
+
+.ness-brand .dot {
+    color: #00ade8 !important;
+}
+
+/* Customize app title in header */
+.MuiToolbar-root .MuiTypography-h6 {
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
