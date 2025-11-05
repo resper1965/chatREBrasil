@@ -1098,24 +1098,8 @@ Acesso total aos especialistas Financeiro e Dados."""
         )
     ]
 
-    # Mensagem de boas-vindas do arquivo JSON (editável sem rebuild!)
-    saudacao = Messages.get('boas_vindas', 'saudacao', username=user_name)
-    descricao = Messages.get('boas_vindas', 'descricao')
-    titulo_opcoes = Messages.get('boas_vindas', 'titulo_opcoes')
-    opcoes = Messages.get('boas_vindas', 'opcoes')
-
-    # Montar mensagem
-    welcome_msg = f"""{saudacao}
-
-{descricao}
-
-**{titulo_opcoes}**"""
-
-    # Adicionar opções
-    for opcao in opcoes:
-        welcome_msg += f"\n• {opcao}"
-    
-    await cl.Message(content=welcome_msg, actions=actions).send()
+    # Não enviar mensagem de boas-vindas - apenas starters
+    # Os starters serão exibidos automaticamente pelo Chainlit
 
 
 @cl.on_message

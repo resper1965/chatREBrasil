@@ -6,6 +6,9 @@
 /* Import Montserrat font */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
+/* Load custom JavaScript */
+/* Note: script tag should be added to HTML, this is just a reminder */
+
 /* Apply Montserrat as default font */
 body, .MuiTypography-root, input, textarea, button {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
@@ -28,41 +31,79 @@ body, .MuiTypography-root, input, textarea, button {
     color: white !important;
 }
 
-/* Remove Chainlit logo from EVERYWHERE */
-.MuiToolbar-root img[alt*="chainlit"],
-.MuiToolbar-root img[alt*="Chainlit"],
+/* Remove Chainlit logo from EVERYWHERE - SELECTIVE MODE */
+/* IMPORTANT: Do NOT hide MCP UI elements or functional icons */
+
+/* Header logos - only Chainlit branding */
+.MuiToolbar-root img[alt*="chainlit"]:not([data-mcp]),
+.MuiToolbar-root img[alt*="Chainlit"]:not([data-mcp]),
 #chainlit-logo,
 .chainlit-logo,
-img[alt="logo"],
-img[alt="Logo"],
-img[src*="logo"],
-img[src*="chainlit"],
-/* Login page logo */
-.login-page img,
-.auth-page img,
-form img,
-.MuiBox-root img[alt*="logo"],
-.MuiBox-root img[alt*="Logo"],
-/* Any logo in forms or auth */
-div[class*="auth"] img,
-div[class*="login"] img {
+
+/* Login and Auth pages - CRITICAL - Only logos, not inputs/buttons */
+/* Target only the logo image at the top of login form */
+form > div:first-child img,
+.MuiBox-root > img[alt*="logo"]:first-child,
+.MuiBox-root > img[src*="logo"]:first-child,
+div[class*="auth"] > div:first-child img,
+div[class*="login"] > div:first-child img,
+/* Specific Chainlit login logo */
+img[alt="Chainlit logo"],
+img[alt="chainlit logo"],
+
+/* Password auth form logo ONLY at top */
+.password-auth-form > img:first-child,
+.auth-form > img:first-child,
+
+/* Sidebar Chainlit logos */
+.MuiDrawer-root img[src*="chainlit"],
+aside img[src*="chainlit"] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     height: 0 !important;
     width: 0 !important;
+    max-height: 0 !important;
+    max-width: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
 
-/* Hide "Made with Chainlit" footer */
+/* Hide "Made with Chainlit" footer and ALL Chainlit attribution */
 footer a[href*="chainlit"],
 footer .MuiLink-root[href*="chainlit"],
-.powered-by-chainlit {
+footer span:contains("Chainlit"),
+footer div:contains("Chainlit"),
+footer p:contains("Chainlit"),
+.powered-by-chainlit,
+.made-with-chainlit,
+[class*="poweredBy"],
+[class*="madeWith"],
+/* Hide any text containing "chainlit" */
+*:contains("Built with Chainlit"),
+*:contains("Made with Chainlit"),
+*:contains("Powered by Chainlit") {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
-/* Hide Chainlit attribution in sidebar */
+/* Hide Chainlit attribution in sidebar and everywhere else */
 .MuiDrawer-root a[href*="chainlit"],
-.MuiDrawer-root .MuiLink-root[href*="chainlit"] {
+.MuiDrawer-root .MuiLink-root[href*="chainlit"],
+aside a[href*="chainlit"],
+nav a[href*="chainlit"],
+.sidebar a[href*="chainlit"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Remove Chainlit text from all elements */
+[data-testid*="chainlit"],
+[aria-label*="chainlit"],
+[aria-label*="Chainlit"],
+[title*="chainlit"],
+[title*="Chainlit"] {
     display: none !important;
 }
 
