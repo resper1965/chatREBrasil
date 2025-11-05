@@ -77,7 +77,7 @@ name = "Gabi."
 
 # layout = "wide"
 
-# default_sidebar_state = "open"
+default_sidebar_state = "open"  # Sidebar aberta para mostrar MCP UI
 
 # Description of the assistant. This is used for HTML tags.
 description = "Assistente inteligente de análise imobiliária - ChatRE Brasil"
@@ -103,14 +103,18 @@ generated_by = "2.8.4"
 enabled = true
 
 # MCP (Model Context Protocol) Servers Configuration
-[mcp]
-
-[mcp.servers.mssql]
-command = "python"
-args = ["/app/mcp_sqlserver_stdio.py"]
-env = {}
-
-[mcp.servers.postgres]
-command = "python"
-args = ["/app/mcp_postgres_stdio.py"]
-env = {}
+# NOTA: Servidores comentados para permitir adição manual via UI
+# O usuário pode adicionar via "My MCPs" na sidebar
+#
+# Para habilitar servidores pré-configurados, descomente:
+# [mcp]
+#
+# [mcp.servers.mssql]
+# command = "python"
+# args = ["/app/mcp_sqlserver_stdio.py"]
+# env = {}
+#
+# [mcp.servers.postgres]
+# command = "python"
+# args = ["/app/mcp_postgres_stdio.py"]
+# env = {}
