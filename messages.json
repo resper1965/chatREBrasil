@@ -1,0 +1,114 @@
+{
+  "_comment": "Arquivo de mensagens editável - SEM REBUILD NECESSÁRIO!",
+  "_instrucoes": "1. Edite os textos abaixo, 2. Salve o arquivo, 3. Reinicie: docker-compose restart app-agent",
+
+  "boas_vindas": {
+    "saudacao": "Olá, {username}! 👋",
+    "descricao": "Pronto para ajudar com suas análises imobiliárias.",
+    "titulo_opcoes": "Como posso ajudar?",
+    "opcoes": [
+      "Calcular ROI e rentabilidade",
+      "Analisar riscos de investimento",
+      "Consultar dados do banco",
+      "Gerar relatórios"
+    ]
+  },
+
+  "botoes": {
+    "conectar_banco": {
+      "label": "🔌 Conectar Banco de Dados",
+      "descricao": "Conecta ao banco principal"
+    }
+  },
+
+  "conexao_sucesso": {
+    "titulo": "✅ Conexão Bem-Sucedida!",
+    "mensagem": "Conectado ao banco {database}. {tabelas_count} tabelas descobertas.",
+    "agora_pode": "Agora você pode:",
+    "opcoes": [
+      "Listar tabelas: \"Quais tabelas existem?\"",
+      "Consultar dados: \"Mostre os dados da tabela X\"",
+      "Analisar estrutura: \"Qual a estrutura da tabela Y?\""
+    ]
+  },
+
+  "conexao_erro": {
+    "titulo": "❌ Erro ao Conectar",
+    "mensagem": "{erro_detalhes}",
+    "como_resolver": "Como resolver:",
+    "passos": [
+      "Verifique se o banco está rodando: docker-compose ps",
+      "Veja os logs: docker-compose logs db-persist",
+      "Reinicie: docker-compose restart app-agent"
+    ]
+  },
+
+  "mensagens_sistema": {
+    "analisando": "🤔 Analisando...",
+    "processando": "⚙️ Processando sua solicitação...",
+    "conectando": "🔄 Conectando ao banco de dados...",
+    "erro_generico": "❌ Ocorreu um erro. Tente novamente."
+  },
+
+  "chat_retomado": {
+    "titulo": "📂 Conversação Retomada",
+    "mensagem": "Continuando de onde paramos..."
+  },
+
+  "exemplos_uso": {
+    "financeiro": [
+      "Calcule o ROI de um imóvel comprado por R$ 300.000",
+      "Analise o risco de uma carteira 60% residencial",
+      "Qual o Cap Rate ideal para investimento?"
+    ],
+    "dados": [
+      "Liste as tabelas do banco",
+      "Mostre os últimos 10 registros da tabela X",
+      "Quantos imóveis temos cadastrados?"
+    ]
+  },
+
+  "mcp": {
+    "conectado": {
+      "titulo": "✅ MCP Conectado",
+      "mensagem": "**{connection_name}**\n📊 {tools_count} ferramentas disponíveis"
+    },
+    "desconectado": {
+      "titulo": "🔌 MCP Desconectado",
+      "mensagem": "{connection_name}"
+    },
+    "auto_conectado": {
+      "mensagem": "✅ Conectei automaticamente ao banco de dados!"
+    },
+    "erros": {
+      "nao_configurado": "❌ **Erro:** MCP não está configurado. Configure em 'My MCPs' primeiro!",
+      "sessao_nao_encontrada": "❌ **Erro:** Sessão MCP SQL não encontrada.",
+      "erro_conectar": "❌ **Erro ao conectar:** {erro_detalhes}"
+    }
+  },
+
+  "postgresql": {
+    "conectando": "🔄 Conectando ao banco PostgreSQL default...",
+    "conectado": {
+      "titulo": "✅ Conectado ao PostgreSQL!",
+      "mensagem": "Conectado ao banco **{database}** em {host}:{port}\n📊 {tabelas_count} tabelas disponíveis",
+      "agora_pode": "Agora você pode:",
+      "opcoes": [
+        "Listar tabelas: \"Quais tabelas existem?\"",
+        "Consultar dados: \"Mostre dados da tabela X\"",
+        "Ver histórico: \"Mostre meus últimos chats\""
+      ]
+    },
+    "erro": {
+      "titulo": "❌ Erro ao Conectar ao PostgreSQL Default",
+      "mensagem": "{erro_detalhes}",
+      "como_resolver": "Como resolver:",
+      "passos": [
+        "Verifique se o PostgreSQL está rodando: docker-compose ps | grep db-persist",
+        "Veja os logs: docker-compose logs db-persist",
+        "Reinicie o banco: docker-compose restart db-persist",
+        "Verifique as credenciais no arquivo .env"
+      ]
+    }
+  }
+}

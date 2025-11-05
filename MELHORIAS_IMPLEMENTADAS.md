@@ -296,6 +296,103 @@ O orquestrador decidirá automaticamente qual agente usar:
 
 ---
 
+## ✏️ 7. Sistema de Mensagens Editáveis (SEM REBUILD!)
+
+### 🔧 O que foi feito:
+
+- **Criado arquivo `messages.json`** - Todas as mensagens do sistema em um arquivo JSON editável
+- **Implementada classe `Messages`** no `app.py` para carregar mensagens dinamicamente
+- **Migradas TODAS as mensagens hardcoded** para o arquivo JSON
+- **Criado guia completo** `EDITAR_MENSAGENS.md` com instruções passo-a-passo
+
+### 🎯 Problema Resolvido:
+
+**Requisito crítico do usuário:** "na descricao e no help demandaria um novo build... impossivel"
+
+Agora é possível alterar **QUALQUER texto** que aparece no chat **SEM REBUILD**!
+
+### 📝 Mensagens Editáveis:
+
+Todas as mensagens agora vêm do arquivo `messages.json`:
+
+#### **Boas-Vindas**
+- Saudação personalizada
+- Descrição do sistema
+- Opções de ajuda
+
+#### **Botões e Ações**
+- Labels de botões
+- Descrições de ações
+
+#### **Conexões**
+- Mensagens de sucesso (MSSQL + PostgreSQL)
+- Mensagens de erro com troubleshooting
+- Status de conexão
+
+#### **MCP (Model Context Protocol)**
+- Conectado / Desconectado
+- Auto-conexão
+- Erros diversos
+
+#### **Sistema**
+- Processando / Analisando
+- Conectando
+- Erros genéricos
+
+#### **Chat**
+- Chat retomado
+- Exemplos de uso
+
+### 🚀 Como Usar (3 Passos):
+
+```bash
+# 1. Edite o arquivo JSON
+nano messages.json
+
+# 2. Salve as alterações
+
+# 3. Reinicie (NÃO rebuild!)
+docker-compose restart app-agent
+```
+
+✅ **Pronto!** Alterações visíveis imediatamente!
+
+### 💡 Suporte a Placeholders:
+
+O sistema substitui automaticamente placeholders dinâmicos:
+
+- `{username}` - Nome do usuário
+- `{database}` - Nome do banco de dados
+- `{tabelas_count}` - Quantidade de tabelas
+- `{connection_name}` - Nome da conexão MCP
+- `{tools_count}` - Quantidade de ferramentas
+- `{host}`, `{port}` - Dados de conexão
+- `{erro_detalhes}` - Detalhes de erro
+
+### 📖 Documentação:
+
+**Guia completo:** `EDITAR_MENSAGENS.md`
+
+Inclui:
+- Estrutura completa do JSON
+- Exemplos práticos
+- Troubleshooting
+- Validação de sintaxe
+- Checklist de edição
+- Casos de uso
+
+### ✅ Benefícios:
+
+| **Antes** | **Depois** |
+|-----------|------------|
+| ❌ Mensagens hardcoded no código Python | ✅ Mensagens em arquivo JSON editável |
+| ❌ Rebuild necessário para alterar texto | ✅ Apenas restart (15 segundos) |
+| ❌ Difícil customizar por cliente | ✅ Fácil customização |
+| ❌ Tradução requer alteração de código | ✅ Tradução apenas editando JSON |
+| ❌ Desenvolvedor necessário | ✅ Qualquer pessoa pode editar |
+
+---
+
 ## 🔍 Próximos Passos Sugeridos
 
 1. **Adicionar dados de exemplo** ao MS SQL Server (REB_BI_IA)
@@ -308,11 +405,14 @@ O orquestrador decidirá automaticamente qual agente usar:
 
 ## 📚 Documentos Relacionados
 
+- `EDITAR_MENSAGENS.md` - **NOVO!** Guia completo de edição de mensagens sem rebuild
 - `PERSISTENCIA_E_BARRA_LATERAL.md` - **NOVO!** Guia completo sobre persistência e barra lateral
+- `CONEXAO_DEFAULT_MCP.md` - **NOVO!** Guia sobre sistema de conexão default
 - `MCP_SETUP.md` - Setup original do MCP
 - `README.md` - Documentação principal do projeto
 - `.env.example` - Template de variáveis de ambiente
 - `docker-compose.yml` - Configuração da stack
+- `messages.json` - **NOVO!** Arquivo de mensagens editáveis
 
 ---
 
