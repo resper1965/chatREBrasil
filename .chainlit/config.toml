@@ -82,6 +82,12 @@ default_sidebar_state = "open"  # Sidebar aberta para mostrar MCP UI
 # Description of the assistant. This is used for HTML tags.
 description = "Assistente inteligente de análise imobiliária - ChatRE Brasil"
 
+# Custom CSS path (relative to public directory)
+custom_css = "/public/custom.css"
+
+# Custom JavaScript path (relative to public directory)
+custom_js = "/public/custom.js"
+
 # Chain of Thought (CoT) display mode. Can be "hidden", "tool_call" or "full".
 cot = "full"
 
